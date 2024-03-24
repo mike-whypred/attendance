@@ -27,7 +27,7 @@ def main():
     class_name = st.sidebar.selectbox("Class", class_options)
     class_date = st.sidebar.date_input("Class Date")
     record_button = st.sidebar.button("Record")
-    first_name = full_name.split()[0]
+    #first_name = full_name.split()[0]
     if record_button:
         # Prepare the data payload
         payload = {
@@ -48,7 +48,7 @@ def main():
         response = post_data_to_retable(payload)
 
         if response.status_code == 201:
-            st.success(f"Thank you {first_name}, your attendance was recorded successfully.")
+            st.success(f"Thank you {full_name}, your attendance was recorded successfully.")
         else:
             st.error("Failed to record attendance. Please email your details to the lecturer")
             
