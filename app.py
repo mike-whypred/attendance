@@ -1,14 +1,13 @@
 import streamlit as st
-from dotenv import load_dotenv
-import os
+
 import requests
-from datetime import datetime
 
 
-load_dotenv()
 
 
-retable_key = os.getenv('RETABLE_KEY')
+
+
+retable_key = st.secrets["RETABLE_KEY"]
 
 
 # Streamlit app layout
