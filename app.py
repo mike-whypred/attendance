@@ -27,7 +27,7 @@ def main():
     class_name = st.sidebar.selectbox("Class", class_options)
     class_date = st.sidebar.date_input("Class Date")
     record_button = st.sidebar.button("Record")
-    #first_name = full_name.split()[0]
+    
     if record_button:
         # Prepare the data payload
         payload = {
