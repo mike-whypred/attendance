@@ -1,30 +1,69 @@
 import streamlit as st
+from dotenv import load_dotenv
+import os
+import requests
+from datetime import datetime
+
+
+load_dotenv()
+
+
+retable_key = os.getenv('RETABLE_KEY')
+
 
 # Streamlit app layout
 def main():
-    # Sidebar
-    st.sidebar.header("Attendance System")
-    
-    # Sidebar text
-    st.sidebar.text("Please Register")
 
-    # Using markdown to create a clickable link that looks like a button
-    url = "https://go.retable.io/projUiMsA4QTLtQuQN5w"
-    button_html = f'<a href="{url}" target="_blank"><button style="color: black; background-color: #FF4B4B; border-radius: 10px; padding: 10px; cursor: pointer; border: none; width: 100%;">Register Attendance</button></a>'
-    st.sidebar.markdown(button_html, unsafe_allow_html=True)
+    st.title("🚀 Class Attendance")
 
+    st.write("Welcome students of DATA6000 please record your attendance here on this app each week, the app will only be available during class time. Thank you.")
+    st.sidebar.title("📓 Register here")
+    st.sidebar.image("study.png", caption="Study Hard!", use_column_width=True) 
     
-    
-     # Creating columns for centering the image
-    col1, col2, col3 = st.columns([1,2,1])
+    # Input fields in the sidebar
+    full_name = st.sidebar.text_input("Full Name")
+    sid = st.sidebar.text_input("SID")
+    # Class input as a dropdown
+    class_options = ["SYD1", "SYD3"]  # Add more class options as needed
+    class_name = st.sidebar.selectbox("Class", class_options)
+    class_date = st.sidebar.date_input("Class Date")
+    record_button = st.sidebar.button("Record")
+    first_name = full_name.split()[0]
+    if record_button:
+        # Prepare the data payload
+        payload = {
+            "data": [
+                {
+                    "columns": [
+                        {"column_id": "F3S58WD5nsKv45K8", "cell_value": full_name},
+                        {"column_id": "oVaNOBXLtP7queZm", "cell_value": sid},
+                        {"column_id": "q4PcKeDfiKBpicyo", "cell_value": class_name},
+                        {"column_id": "iINv3MajS3WOhH5G", "cell_value": class_date.strftime("%d-%m-%Y")},
+                        # Add additional columns here as needed
+                    ]
+                }
+            ]
+        }
 
-    # Displaying the image in the center column
-    with col2:
-        # Main panel
-        st.title("Welcome to your Capstone Unit")
-        st.write("This app is created by AI, use the button or the QR code, link will only work during class hours.")
-        st.image('qrCode.png', caption="Scan this QR code", width=500)
-   
+        # Post request to the Retable API
+        response = post_data_to_retable(payload)
+
+        if response.status_code == 201:
+            st.success(f"Thank you {first_name}, your attendance was recorded successfully.")
+        else:
+            st.error("Failed to record attendance. Please email your details to the lecturer")
+            
+
+def post_data_to_retable(payload):
+    """Function to send POST request to the Retable API."""
+    url = "https://api.retable.io/v1/public/retable/c6iQUuyvBcF8fZwa/data"
+    headers = {
+        "ApiKey": retable_key,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+    return response
 
 if __name__ == "__main__":
     main()
